@@ -79,13 +79,18 @@
     <script>
         async function fetchData() {
             document.getElementById('fetch-data').disabled = true;
-            const response = await fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=1000');
+
+            const now = new Date();
+            const endTime = now.getTime();
+            const startTime = endTime - 24 * 60 * 60 * 1000;  // Letzte 24 Stunden
+
+            const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&startTime=${startTime}&endTime=${endTime}`);
             const data = await response.json();
 
             const tableBody = document.getElementById('data-table').querySelector('tbody');
             tableBody.innerHTML = '';
 
-            data.forEach(row => {
+            data.reverse().forEach(row => {
                 const newRow = document.createElement('tr');
                 newRow.innerHTML = `
                     <td>${new Date(row[0]).toLocaleString()}</td>
